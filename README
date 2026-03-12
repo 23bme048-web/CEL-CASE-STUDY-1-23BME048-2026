@@ -1,0 +1,88 @@
+
+⚙️ Nonlinear Spring Equilibrium Using Bisection Method (MATLAB)
+This project solves for the equilibrium displacement of a nonlinear spring subjected to a constant force using the Bisection method in MATLAB.
+The spring contains a cubic stiffness component, making the system nonlinear. The equilibrium displacement is calculated iteratively by finding the root of the force residual equation.
+📘 Problem Description
+Given:
+ * Linear stiffness: k = 100
+ * Cubic stiffness: beta = 40
+ * Applied Force: P = 50
+Using the balance of internal spring resistance and external applied force, we obtain the residual force equation:
+This nonlinear equation is solved for x (displacement) when f(x) = 0 using the Bisection method.
+🧠 Method Used
+Bisection Update Equation:
+Where:
+ * x_l = Lower bound (Initially 0)
+ * x_u = Upper bound (Initially 1.3)
+ * x_r = Midpoint (Current root estimate)
+ * y_l and y_r = Function evaluations at x_l and x_r
+ * Convergence condition: Loop continues while |x_u - x_l| > [span_13](start_span)0.01
+The bounds are updated based on the sign of y_l \times y_r. If the product is negative, x_u = x_r; otherwise, x_l = x_r.
+🛠 MATLAB Code
+clc; clear; close all;
+
+k = 100;    % Linear stiffness
+beta = 40;  % Cubic stiffness
+P = 50;     % Applied Force
+
+
+xl = 0;    
+xu = 1.3;  
+err = 0.01;
+iter = 1;
+data = [];
+
+
+while abs(xu - xl) > err
+    xr = (xl + xu) / 2;
+    
+    
+    yl = k*xl + beta*xl^3 - P;
+    yr = k*xr + beta*xr^3 - P;
+    
+    
+    data(iter, :) = [xl xr xu yl yr];
+    
+    
+    if yl * yr < 0
+        xu = xr;
+    else
+        xl = xr;
+    end
+    iter = iter + 1;
+end
+
+root = xr;
+disp('   xl       xr       xu       yl       yr');
+disp(data);
+fprintf('Displacement Root = %f m\n', root);
+
+
+x_vals = linspace(0, 1.3, 300);
+y_vals = k*x_vals + beta*x_vals.^3 - P;
+
+figure;
+plot(x_vals, y_vals, 'LineWidth', 1.5); hold on;
+plot(root, 0, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
+grid on;
+xlabel('Displacement (x)');
+ylabel('Force Residual (f(x))');
+title('Nonlinear Spring Equilibrium Root');
+
+
+📊 Output
+The program displays:
+ * A data table showing the tracking of variables (x_l, x_r, x_u, y_l, y_r) across all iterations.
+ * Final value of the calculated Displacement Root.
+ * A generated plot of the Force Residual vs. Displacement curve, with the exact equilibrium root marked with a red dot.
+🚀 How to Run
+ * Open MATLAB
+ * Create a new script file (e.g., nonlinear_spring_bisection.m)
+ * Paste the code
+ * Run the script
+📌 Applications
+ * Mechanical vibrations and spring analysis
+ * Numerical methods implementation
+ * Bisection method practice
+ * Structural engineering simulations
+
